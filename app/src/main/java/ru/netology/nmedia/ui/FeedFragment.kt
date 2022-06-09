@@ -13,6 +13,7 @@ import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.R
+import ru.netology.nmedia.adapter.FeedLoadStateAdapter
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.auth.AppAuth
@@ -65,7 +66,11 @@ class FeedFragment : Fragment() {
                 startActivity(shareIntent)
             }
         })
-        binding.list.adapter = adapter
+
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = FeedLoadStateAdapter { adapter.retry() },
+            footer = FeedLoadStateAdapter { adapter.retry() }
+        )
 
         lifecycleScope.launchWhenCreated {
             viewModel.data.collectLatest(adapter::submitData)
@@ -74,9 +79,7 @@ class FeedFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest { state ->
                 binding.swiperefresh.isRefreshing =
-                    state.refresh is LoadState.Loading ||
-                    state.prepend is LoadState.Loading ||
-                    state.append is LoadState.Loading
+                    state.refresh is LoadState.Loading
             }
         }
 

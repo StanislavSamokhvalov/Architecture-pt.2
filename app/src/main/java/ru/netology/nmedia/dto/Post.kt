@@ -1,6 +1,15 @@
 package ru.netology.nmedia.dto
 
 import ru.netology.nmedia.enumeration.AttachmentType
+//
+//sealed interface FeedItem {
+//    val id: Long
+//}
+
+//data class Ad(
+//    override val id: Long,
+//    val image: String
+//) : FeedItem
 
 data class Post(
     val id: Long,
